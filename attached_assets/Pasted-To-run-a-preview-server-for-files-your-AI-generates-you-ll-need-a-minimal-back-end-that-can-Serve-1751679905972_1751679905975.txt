@@ -1,0 +1,148 @@
+To run a preview server for files your AI generates, you'll need a minimal back-end that can:
+
+Serve static and dynamic file content (e.g. .ts, .html, .json, .md, etc.)
+
+Accept new/generated files from the AI
+
+Optionally support real-time updates (e.g., via WebSockets or SSE)
+
+Secure access (e.g., API keys or auth if you're building PEAKS AI as a dev tool)
+
+✅ 1. Server file structure (minimal)
+Here’s the set of files/folders you’d want in a Node.js/Express or tRPC/NestJS server:
+
+pgsql
+Copy
+Edit
+/preview-server/
+├── src/
+│   ├── index.ts               # Server entry point
+│   ├── routes/
+│   │   ├── preview.ts         # GET /preview?file=path
+│   │   └── upload.ts          # POST /upload
+│   ├── files/                 # AI-generated files stored here
+│   ├── utils/
+│   │   └── fileHelpers.ts     # read/write file logic
+│   └── config.ts              # Path config, rate limits, etc.
+├── public/                    # For static file previews
+├── .env                       # Base path, port
+├── tsconfig.json
+├── package.json
+└── README.md
+✅ 2. Install minimal deps
+bash
+Copy
+Edit
+npm init -y
+npm install express cors dotenv fs-extra
+npm install --save-dev typescript ts-node @types/node @types/express
+✅ 3. Basic Express server (src/index.ts)
+ts
+Copy
+Edit
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { getFileContent } from './utils/fileHelpers';
+
+dotenv.config();
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const PORT = process.env.PORT || 3001;
+
+// Serve a preview of a file
+app.get('/preview', async (req, res) => {
+  const file = req.query.file as string;
+  try {
+    const content = await getFileContent(file);
+    res.send({ content });
+  } catch (err) {
+    res.status(404).json({ error: 'File not found' });
+  }
+});
+
+// Upload/save a generated file
+app.post('/upload', async (req, res) => {
+  const { fileName, content } = req.body;
+  const fs = require('fs');
+  const path = require('path');
+  const fullPath = path.join(__dirname, 'files', fileName);
+
+  fs.writeFile(fullPath, content, (err: any) => {
+    if (err) return res.status(500).json({ error: 'Write failed' });
+    res.status(200).json({ message: 'Saved successfully' });
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Preview server running on http://localhost:${PORT}`);
+});
+✅ 4. File utility (src/utils/fileHelpers.ts)
+ts
+Copy
+Edit
+import fs from 'fs/promises';
+import path from 'path';
+
+const BASE_DIR = path.join(__dirname, '..', 'files');
+
+export async function getFileContent(fileName: string): Promise<string> {
+  const fullPath = path.join(BASE_DIR, fileName);
+  const content = await fs.readFile(fullPath, 'utf-8');
+  return content;
+}
+✅ 5. Run it
+Create a script in package.json:
+
+json
+Copy
+Edit
+"scripts": {
+  "dev": "ts-node src/index.ts"
+}
+Then run it:
+
+bash
+Copy
+Edit
+npm run dev
+✅ 6. Frontend Preview Fetch
+From your React frontend, you can call:
+
+ts
+Copy
+Edit
+const res = await fetch(`http://localhost:3001/preview?file=demo.ts`);
+const data = await res.json();
+const content = data.content;
+Use this with your <FilePreview /> component.
+
+📦 Optional Features to Add Later
+Feature	Add this
+Live updates	Add WebSockets or SSE (socket.io or express-sse)
+Auth/token	Use JWT or API key middleware
+File tree	Add GET /list route to return directory listing
+Code diffing	Store past versions in /history/ folder
+Static hosting	Use express.static('public') to serve HTML, images, etc.
+File delete	Add DELETE /file/:name
+
+Let me know:
+
+Do you want a tRPC or NestJS version instead of Express?
+
+Or are you using serverless (like Vercel functions)?
+
+I can generate that version for you too.
+
+
+2/2
+
+
+
+
+
+
+
+

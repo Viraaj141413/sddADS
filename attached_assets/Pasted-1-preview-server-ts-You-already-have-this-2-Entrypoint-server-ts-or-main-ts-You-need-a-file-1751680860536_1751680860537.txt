@@ -1,0 +1,111 @@
+1. preview.server.ts
+✓ ✅ You already have this!
+
+2. Entrypoint: server.ts or main.ts
+You need a file to import and use previewManager:
+
+ts
+Copy
+Edit
+import express from 'express';
+import { previewManager } from './preview.server';
+
+const app = express();
+app.use(express.json());
+
+// API to create a preview
+app.post('/api/preview', async (req, res) => {
+  const { projectId, files } = req.body;
+  try {
+    const { url, port } = await previewManager.createPreview(projectId, files);
+    res.json({ url, port });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+// API to update preview
+app.post('/api/preview/update', async (req, res) => {
+  const { projectId, files } = req.body;
+  try {
+    await previewManager.updatePreview(projectId, files);
+    res.json({ message: 'Updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+// API to stop preview
+app.post('/api/preview/stop', async (req, res) => {
+  const { projectId } = req.body;
+  try {
+    await previewManager.stopPreview(projectId);
+    res.json({ message: 'Preview stopped' });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`🧠 API server running at http://localhost:${PORT}`);
+});
+3. Types (Optional)
+For strong type safety across your app, extract the shared types:
+
+ts
+Copy
+Edit
+// types.ts
+export interface FilePayload {
+  content: string;
+  language: string;
+}
+
+export type FileMap = Record<string, FilePayload>;
+Then use in both client and server.
+
+4. preview-files/ Directory
+This is auto-created, but you may want to add it to .gitignore:
+
+bash
+Copy
+Edit
+# .gitignore
+preview-files/
+5. Client (React)
+If you're calling this from your app UI, here's how you can trigger a preview:
+
+ts
+Copy
+Edit
+const response = await fetch('/api/preview', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    projectId: 'abc123',
+    files: {
+      'index.html': { content: '<h1>Hello</h1>', language: 'html' },
+      'style.css': { content: 'body { background: black }', language: 'css' }
+    }
+  })
+});
+const data = await response.json();
+console.log(data.url); // Open this in a new tab or iframe
+🛠 Optional Enhancements
+Feature	Description
+🔒 Auth	Add tokens to restrict preview access
+🧼 Cleanup	Delete old projects after X minutes
+🧪 Test loader	Load test output or runtime logs
+🗂 Directory browsing	Add file tree or index page viewer
+🔁 Live reload	Add WebSocket or SSE for real-time updates
+
+Would you like me to:
+
+Generate the full working server.ts and client fetch code?
+
+Add a cleanup system to delete old previews after a timeout?
+
+Add support for live reloading using WebSocket?
+
+Let me know your next goal.
