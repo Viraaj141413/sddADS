@@ -1,0 +1,47 @@
+chatbot-project/
+├── src/                  # Frontend (React, TypeScript)
+│   ├── assets/           # Images, icons
+│   ├── components/       # Reusable UI components
+│   │   ├── Layout.tsx
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   ├── ChatWindow.tsx      # Main chat display area
+│   │   ├── MessageBubble.tsx   # Individual chat message component
+│   │   ├── ChatInput.tsx       # User input area
+│   │   ├── LoadingDots.tsx     # For showing AI is "thinking"
+│   │   └── DarkModeToggle.tsx
+│   ├── context/          # React Contexts for global state
+│   │   └── ChatContext.tsx
+│   ├── hooks/            # Custom React Hooks
+│   │   └── useChat.ts
+│   ├── pages/            # Top-level pages
+│   │   └── HomePage.tsx        # Our main chatbot page
+│   ├── services/         # API service calls
+│   │   └── api.ts
+│   ├── styles/           # CSS files
+│   │   └── globals.css
+│   ├── utils/            # Utility functions
+│   │   └── helpers.ts
+│   ├── App.tsx           # Main application component
+│   └── main.tsx          # Entry point for React app
+├── server/               # Backend (Node.js, Express)
+│   ├── config/           # Database connection, environment setup
+│   │   └── db.js
+│   ├── models/           # Mongoose models for database
+│   │   └── Message.js
+│   ├── routes/           # API routes
+│   │   └── chatRoutes.js
+│   ├── controllers/      # Logic for routes
+│   │   └── chatController.js
+│   ├── middleware/       # Express middleware (e.g., error handling)
+│   │   └── errorHandler.js
+│   └── index.js          # Main server entry point
+├── public/               # Static assets for the frontend
+│   └── favicon.ico
+├── .env                  # Environment variables
+├── package.json          # Project dependencies and scripts
+├── tsconfig.json         # TypeScript configuration
+├── vite.config.ts        # Vite configuration
+├── tailwind.config.js    # Tailwind CSS configuration
+├── postcss.config.js     # PostCSS configuration for Tailwind
+└── README.md             # Project documentation
