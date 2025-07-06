@@ -1,0 +1,3 @@
+# VIRAAJ DEVICE MEMORY
+# Format: [timestamp] DEVICE: deviceId|userId|remember|autoLogin
+

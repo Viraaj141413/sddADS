@@ -1,0 +1,3 @@
+# VIRAAJ SESSIONS LOG
+# Format: [timestamp] SESSION: userId|sessionId|ip|action
+
